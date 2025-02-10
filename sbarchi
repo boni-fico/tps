@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -12,53 +11,73 @@
         const canvas = document.getElementById("grafico");
         const ctx = canvas.getContext("2d");
 
-        // Dimensioni del grafico
+
+        const dati = [
+            { anno: 1997, sbarchi: 24832 },
+            { anno: 1998, sbarchi: 38709 },
+            { anno: 1999, sbarchi: 49677 },
+            { anno: 2000, sbarchi: 26738 },
+            { anno: 2001, sbarchi: 20625 },
+            { anno: 2002, sbarchi: 23519 },
+            { anno: 2003, sbarchi: 14331 },
+            { anno: 2004, sbarchi: 13894 },
+            { anno: 2005, sbarchi: 22239 },
+            { anno: 2006, sbarchi: 22016 },
+            { anno: 2007, sbarchi: 19900 },
+            { anno: 2008, sbarchi: 36451 },
+            { anno: 2009, sbarchi: 9734 },
+            { anno: 2010, sbarchi: 4423 },
+            { anno: 2011, sbarchi: 62492 },
+            { anno: 2012, sbarchi: 13420 },
+            { anno: 2013, sbarchi: 42825 },
+            { anno: 2014, sbarchi: 170100 },
+            { anno: 2015, sbarchi: 153842 },
+            { anno: 2016, sbarchi: 181436 },
+            { anno: 2017, sbarchi: 119369 },
+            { anno: 2018, sbarchi: 23970 },
+            { anno: 2019, sbarchi: 11471 },
+            { anno: 2020, sbarchi: 34154 }
+        ];
+
+
         const padding = 50;
         const larghezza = canvas.width - 2 * padding;
         const altezza = canvas.height - 2 * padding;
 
-        // Funzioni per convertire i valori in coordinate canvas
-        function scalaX(anno, minAnno, maxAnno) {
-            return padding + ((anno - minAnno) / (maxAnno - minAnno)) * larghezza;
-        }
 
-        function scalaY(sbarchi, maxSbarchi) {
-            return canvas.height - padding - (sbarchi / maxSbarchi) * altezza;
-        }
+        const maxSbarchi = Math.max(...dati.map(d => d.sbarchi));
 
-        function disegnaGrafico(dati) {
-            if (dati.length === 0) return;
-            
-            const minAnno = Math.min(...dati.map(d => d.anno));
-            const maxAnno = Math.max(...dati.map(d => d.anno));
-            const maxSbarchi = Math.max(...dati.map(d => d.sbarchi));
-            
-            // Disegna gli assi
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.beginPath();
-            ctx.moveTo(padding, padding);
-            ctx.lineTo(padding, canvas.height - padding);
-            ctx.lineTo(canvas.width - padding, canvas.height - padding);
-            ctx.stroke();
-            
-            // Disegna i punti e le linee del grafico
-            ctx.strokeStyle = "blue";
-            ctx.fillStyle = "red";
-            ctx.lineWidth = 2;
-            ctx.beginPath();
+ 
+        const scalaX = (anno) => padding + (anno - dati[0].anno) * (larghezza / (dati.length - 1));
+        const scalaY = (sbarchi) => canvas.height - padding - (sbarchi / maxSbarchi) * altezza;
 
-            dati.forEach((d, i) => {
-                let x = scalaX(d.anno, minAnno, maxAnno);
-                let y = scalaY(d.sbarchi, maxSbarchi);
-                if (i === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-                ctx.fillRect(x - 3, y - 3, 6, 6); 
-            });
-            ctx.stroke();
-        }
+
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, canvas.height - padding);
+        ctx.lineTo(canvas.width - padding, canvas.height - padding);
+        ctx.stroke();
+
+   
+        ctx.strokeStyle = "blue";
+        ctx.fillStyle = "red";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        dati.forEach((d, i) => {
+            let x = scalaX(d.anno);
+            let y = scalaY(d.sbarchi);
+
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+
+            ctx.fillRect(x - 3, y - 3, 6, 6); 
+        });
+
+        ctx.stroke();
     </script>
 </body>
 </html>
