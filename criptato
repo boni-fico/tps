@@ -1,0 +1,45 @@
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criptazione Testo</title>
+</head>
+<body>
+    <h1>Carica il file di testo e il dizionario</h1>
+    <input type="file" id="fileInput" accept=".txt">
+    <input type="file" id="dictInput" accept=".json">
+    <button onclick="processFile()">Cripta</button>
+    <p id="message"></p>
+    <a href="decrypt.html">Vai alla decrittazione</a>
+
+    <script>
+        function processFile() {
+            const fileInput = document.getElementById('fileInput').files[0];
+            const dictInput = document.getElementById('dictInput').files[0];
+            if (!fileInput || !dictInput) {
+                document.getElementById('message').innerText = "Seleziona entrambi i file";
+                return;
+            }
+            
+            const reader = new FileReader();
+            const dictReader = new FileReader();
+
+            dictReader.onload = function(event) {
+                const dictionary = JSON.parse(event.target.result);
+                reader.onload = function(e) {
+                    let text = e.target.result;
+                    let encryptedText = encryptText(text, dictionary);
+                    localStorage.setItem('encryptedText', encryptedText);
+                    document.getElementById('message').innerText = "Testo criptato e salvato";
+                };
+                reader.readAsText(fileInput);
+            };
+            dictReader.readAsText(dictInput);
+        }
+
+        function encryptText(text, dictionary) {
+            return text.split('').map(char => dictionary[char] || char).join('');
+        }
+    </script>
+</body>
+</html>
