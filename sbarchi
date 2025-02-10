@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafico Sbarchi Migranti</title>
+</head>
+<body>
+    <canvas id="grafico" width="800" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById("grafico");
+        const ctx = canvas.getContext("2d");
+
+        // Dimensioni del grafico
+        const padding = 50;
+        const larghezza = canvas.width - 2 * padding;
+        const altezza = canvas.height - 2 * padding;
+
+        // Funzioni per convertire i valori in coordinate canvas
+        function scalaX(anno, minAnno, maxAnno) {
+            return padding + ((anno - minAnno) / (maxAnno - minAnno)) * larghezza;
+        }
+
+        function scalaY(sbarchi, maxSbarchi) {
+            return canvas.height - padding - (sbarchi / maxSbarchi) * altezza;
+        }
+
+        function disegnaGrafico(dati) {
+            if (dati.length === 0) return;
+            
+            const minAnno = Math.min(...dati.map(d => d.anno));
+            const maxAnno = Math.max(...dati.map(d => d.anno));
+            const maxSbarchi = Math.max(...dati.map(d => d.sbarchi));
+            
+            // Disegna gli assi
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.stroke();
+            
+            // Disegna i punti e le linee del grafico
+            ctx.strokeStyle = "blue";
+            ctx.fillStyle = "red";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            dati.forEach((d, i) => {
+                let x = scalaX(d.anno, minAnno, maxAnno);
+                let y = scalaY(d.sbarchi, maxSbarchi);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+                ctx.fillRect(x - 3, y - 3, 6, 6); 
+            });
+            ctx.stroke();
+        }
+    </script>
+</body>
+</html>
