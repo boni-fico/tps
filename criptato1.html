@@ -1,0 +1,29 @@
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carica il File</title>
+</head>
+<body>
+    <h1>Carica il file di testo contenente il brano e il dizionario</h1>
+    <input type="file" id="fileInput" accept=".txt">
+    <button onclick="processFile()">Carica e Cripta</button>
+
+    <script>
+        function processFile() {
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Seleziona un file prima di procedere.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const fileContent = event.target.result;
+                localStorage.setItem("fileContent", fileContent);
+                window.location.href = "crypt.html";
+            };
+
+            reader.readAsText(file);
