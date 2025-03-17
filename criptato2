@@ -1,0 +1,90 @@
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criptazione e Decriptazione</title>
+</head>
+<body>
+    <h1>Criptazione del brano</h1>
+
+    <h2>Messaggio Criptato</h2>
+    <p id="cryptedMessage"></p>
+
+    <h2>Inserisci la chiave per decriptare</h2>
+    <input type="text" id="keyInput" placeholder="Inserisci la chiave per decriptare">
+    <button onclick="decryptMessage()">Decripta</button>
+
+    <h3>Messaggio Decriptato</h3>
+    <p id="decryptedMessage"></p>
+
+    <script>
+        
+        function encryptMessage(text, key) {
+            let encryptedText = "";
+            const dictionary = localStorage.getItem("fileContent").split("\n");
+            const dictionaryMap = {};
+
+            
+            dictionary.forEach(line => {
+                const parts = line.split(":");
+                if (parts.length === 2) {
+                    dictionaryMap[parts[0].trim()] = parts[1].trim();
+                }
+            });
+
+            /
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (dictionaryMap[char]) {
+                    encryptedText += dictionaryMap[char];
+                } else {
+                    encryptedText += char;
+                }
+            }
+            return encryptedText;
+        }
+
+        function decryptMessage() {
+            const key = document.getElementById("keyInput").value;
+            const encryptedMessage = localStorage.getItem("encryptedMessage");
+            if (!key || !encryptedMessage) {
+                alert("Assicurati di inserire la chiave e che il messaggio criptato esista.");
+                return;
+            }
+
+            let decryptedText = "";
+            const dictionary = localStorage.getItem("fileContent").split("\n");
+            const dictionaryMap = {};
+
+            dictionary.forEach(line => {
+                const parts = line.split(":");
+                if (parts.length === 2) {
+                    dictionaryMap[parts[1].trim()] = parts[0].trim();
+                }
+            });
+
+            // Decriptazione del messaggio
+            for (let i = 0; i < encryptedMessage.length; i++) {
+                const char = encryptedMessage[i];
+                if (dictionaryMap[char]) {
+                    decryptedText += dictionaryMap[char];
+                } else {
+                    decryptedText += char;
+                }
+            }
+
+            document.getElementById("decryptedMessage").textContent = decryptedText;
+        }
+        window.onload = function() {
+            const fileContent = localStorage.getItem("fileContent");
+            if (fileContent) {
+                const brano = fileContent.split("\n")[0];
+                const key = "default";
+                const encrypted = encryptMessage(brano, key);
+                localStorage.setItem("encryptedMessage", encrypted);
+                document.getElementById("cryptedMessage").textContent = encrypted;
+            }
+        };
+    </script>
+</body>
+</html>
