@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizzatore JSON/XML</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        button { padding: 10px 15px; margin: 20px 0; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        input[type="file"] { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Carica un file JSON o XML</h1>
+
+    <input type="file" id="fileInput" />
+    <button onclick="processFile()">Carica e Visualizza</button>
+
+    <div id="output"></div>
+
+    <script>
+        function processFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            if (file) {
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    let parsedData;
+                    try {
+                        if (file.name.endsWith('.json')) {
+                            parsedData = JSON.parse(content);
+                            displayJSON(parsedData);
+                        } else if (file.name.endsWith('.xml')) {
+                            parsedData = parseXML(content);
+                            displayXML(parsedData);
+                        } else {
+                            alert('Solo file JSON o XML sono supportati.');
+                        }
+                    } catch (error) {
+                        alert('Errore nella lettura del file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function displayJSON(data) {
+            let html = "<h2>Contenuto del file JSON</h2>";
+            html += "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+            document.getElementById('output').innerHTML = html;
+        }
+
+        function parseXML(xmlString) {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+            return xmlDoc;
+        }
+
+        function displayXML(xmlDoc) {
+            let html = "<h2>Contenuto del file XML</h2>";
+            const xmlString = new XMLSerializer().serializeToString(xmlDoc);
+            html += "<pre>" + xmlString + "</pre>";
+            document.getElementById('output').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
